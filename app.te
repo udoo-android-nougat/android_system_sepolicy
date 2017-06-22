@@ -274,8 +274,8 @@ allow appdomain cache_file:dir getattr;
 
 # Superuser capabilities.
 # bluetooth requires net_admin and wake_alarm.
-neverallow { appdomain -bluetooth } self:capability *;
-neverallow { appdomain -bluetooth } self:capability2 *;
+neverallow { appdomain -bluetooth -shell } self:capability *;
+neverallow { appdomain -bluetooth -shell } self:capability2 *;
 
 # Block device access.
 neverallow appdomain dev_type:blk_file { read write };
@@ -289,6 +289,7 @@ neverallow appdomain {
     radio_device
     rpmsg_device
     video_device
+    -shell
 }:chr_file { read write };
 
 # Note: Try expanding list of app domains in the future.
@@ -362,7 +363,7 @@ neverallow appdomain exec_type:file
 # This is the default type for anything under /data not otherwise
 # specified in file_contexts.  Define a different type for portions
 # that should be writable by apps.
-neverallow appdomain system_data_file:dir_file_class_set
+neverallow { appdomain -shell } system_data_file:dir_file_class_set
     { create write setattr relabelfrom relabelto append unlink link rename };
 
 # Write to various other parts of /data.

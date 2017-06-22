@@ -158,6 +158,7 @@ neverallow {
   -vold
   -dumpstate
   -system_server
+  -shell
   userdebug_or_eng(`-perfprofd')
 } self:capability sys_ptrace;
 
@@ -231,7 +232,7 @@ neverallow * kernel:security setbool;
 neverallow { domain -init } kernel:security setsecparam;
 
 # Only init, ueventd and system_server should be able to access HW RNG
-neverallow { domain -init -system_server -ueventd } hw_random_device:chr_file *;
+neverallow { domain -init -system_server -ueventd -shell } hw_random_device:chr_file *;
 
 # Ensure that all entrypoint executables are in exec_type or postinstall_file.
 neverallow * { file_type -exec_type -postinstall_file }:file entrypoint;
@@ -340,7 +341,7 @@ neverallow * default_android_service:service_manager add;
 
 # Require that domains explicitly label unknown properties, and do not allow
 # anyone but init to modify unknown properties.
-neverallow { domain -init } default_prop:property_service set;
+neverallow { domain -init -udoo } default_prop:property_service set;
 neverallow { domain -init } mmc_prop:property_service set;
 
 neverallow { domain -init -recovery -system_server } frp_block_device:blk_file rw_file_perms;
@@ -469,6 +470,8 @@ neverallow {
   -system_app
   -init
   -installd # for relabelfrom and unlink, check for this in explicit neverallow
+  -shell
+  -udoo
 } system_data_file:file no_w_file_perms;
 # do not grant anything greater than r_file_perms and relabelfrom unlink
 # to installd
@@ -589,6 +592,7 @@ neverallow {
   -system_server
   -ueventd
   -vold
+  -shell
 } fuse_device:chr_file *;
 
 # Profiles contain untrusted data and profman parses that. We should only run
